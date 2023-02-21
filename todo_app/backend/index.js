@@ -1,16 +1,29 @@
-const express = require('express');
-const mongoose = require('mongoose')
-const dotenv = require('dotenv').config();
 
+const express = require("express");
 const app = express();
-app.use(express.json());
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const helmet = require("helmet");
+const morgan = require("morgan");
+const todoItems = require("./routers/todoItems");
 
-const PORT = process.env.PORT || 5500;
-
-//connect to the mongo
-mongoose.connect(process.env.DB_CONNECT)
-.then(()=>console.log("Database Connected"))
-.catch(err => console.log(err))
+dotenv.config();
 
 
-app.listen(PORT, ()=>console.log("Server connected..."));
+mongoose.connect('mongodb+srv://root:root@cluster0.cfeu4ph.mongodb.net/test',()=>{
+    console.log("Connected to mongo")
+});
+
+
+
+//middleware
+app.use(express.json());  
+app.use(helmet());
+app.use(morgan("common"));
+
+
+app.use("/api", todoItems );
+
+app.listen(8800,()=>{
+    console.log("Backend server is running")
+})
